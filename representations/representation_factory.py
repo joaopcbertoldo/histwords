@@ -1,6 +1,14 @@
 from embedding import SVDEmbedding, Embedding, GigaEmbedding
 from explicit import Explicit
 
+
+class Representations(object):
+
+    EXPLICIT = "Explicit"
+    SVD = "SVD"
+    GIGA = "GIGA"
+
+
 def create_representation(rep_type, path, *args, **kwargs):
     if rep_type == 'Explicit' or rep_type == 'PPMI':
         return Explicit.load(path, *args, **kwargs)
