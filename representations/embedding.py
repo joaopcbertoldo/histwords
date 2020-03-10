@@ -84,7 +84,8 @@ class Embedding:
         """
         Assumes the vectors have been normalized.
         """
-        scores = self.m.dot(self.represent(w))
+        vec = self.represent(w) if isinstance(w, str) else w
+        scores = self.m.dot(vec)
         return heapq.nlargest(n, zip(scores, self.iw))
     
 
