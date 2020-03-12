@@ -4,18 +4,19 @@ import numpy as np
 from sklearn import preprocessing
 
 from ioutils import load_pickle
-#, lines
+
 
 class Embedding:
     """
     Base class for all embeddings. SGNS can be directly instantiated with it.
     """
 
-    def __init__(self, vecs, vocab, normalize=True, **kwargs):
+    def __init__(self, vecs, vocab, normalize=True, is_context=False, **kwargs):
         self.m = vecs
         self.dim = self.m.shape[1]
         self.iw = vocab
-        self.wi = {w:i for i,w in enumerate(self.iw)}
+        self.wi = {w: i for i, w in enumerate(self.iw)}
+        self.is_context = is_context
         if normalize:
             self.normalize()
 
@@ -32,12 +33,17 @@ class Embedding:
         return not self.oov(key)
 
     @classmethod
-    def load(cls, path, normalize=True, add_context=False, **kwargs):
-        mat = np.load(path + "-w.npy", mmap_mode="c")
-        if add_context:
-            mat += np.load(path + "-c.npy", mmap_mode="c")
-        iw = load_pickle(path + "-vocab.pkl")
-        return cls(mat, iw, normalize) 
+    def load(cls, path, normalize=True, add_context=False, context=False, **kwargs):
+        w_matrix_path = path + "-w.npy"
+        c_matrix_path = path + "-c.npy"
+        vocab_path = path + "-vocab.pkl"
+
+        mat = np.load(w_matrix_path if not context else c_matrix_path, mmap_mode="c")
+        if not context and add_context:
+            mat += np.load(c_matrix_path, mmap_mode="c")
+        iw = load_pickle(vocab_path)
+
+        return cls(mat, iw, normalize, is_context=context)
 
     def get_subembed(self, word_list, **kwargs):
         word_list = [word for word in word_list if not self.oov(word)]

@@ -6,7 +6,8 @@ from multiprocessing import Process, Queue
 from Queue import Empty
 
 import ioutils
-from vecanalysis.representations.explicit import Explicit
+# from vecanalysis.representations.explicit import Explicit
+from representations.explicit import Explicit
 from statutils.fastfreqdist import CachedFreqDist
 SAMPLE_MAX = 1e9
 
